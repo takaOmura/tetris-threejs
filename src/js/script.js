@@ -248,10 +248,10 @@ game.scene.add(gameBox)
 
 gameInit()
 game.spawnMino(7)
-console.log(game)
-// game.mino.traverse((obj) => {
-//     console.log(obj)
-// })
+// console.log(game)
+//  game.mino.traverse((obj) => {
+// //     console.log(obj)
+//  })
 
 
 window.addEventListener('keydown', (event) => {
@@ -272,7 +272,7 @@ window.addEventListener('keydown', (event) => {
         game.rotate('left')
     }
     if (event.code === "Space") {
-        console.log('userPause pressed')
+        //        console.log('userPause pressed')
         game.userPause = (game.userPause) ? false : true
     }
     if (event.code !== "Tab") {
@@ -324,7 +324,7 @@ function tick() {
                     game.next()
                 }
                 time = elapsedTime
-                // console.log('hanging!!!', game.hang.hangTime, time)
+                //                // console.log('hanging!!!', game.hang.hangTime, time)
             } else if (elapsedTime - time > baseTime) {
                 game.next()
                 time = elapsedTime
@@ -378,7 +378,7 @@ function gameInit() {
     };
     game.move = (direction) => {
         const positions = game.mino.getPositionOfEachBox();
-        console.log({ beforeMove: positions })
+        //        console.log({ beforeMove: positions })
         const delta = (() => {
             switch (direction) {
                 case 'left':
@@ -391,9 +391,9 @@ function gameInit() {
                     return { x: 0, y: 1 };
             }
         })();
-        // console.log({ positions, delta, coordinates: game.field.coordinates })
+        //        // console.log({ positions, delta, coordinates: game.field.coordinates })
         const hasNeighbor = positions.some(([x, y, _]) => {
-            console.log({ inHas: game.field.coordinates[x + delta.x], position: [x, y], delta, coo: game.field.coordinates })
+            //            console.log({ inHas: game.field.coordinates[x + delta.x], position: [x, y], delta, coo: game.field.coordinates })
             if (x + delta.x > game.dimensions.width || y + delta.y > game.dimensions.height || x + delta.x < 0 || y + delta.y < 0) {
                 return true
             }
@@ -406,8 +406,8 @@ function gameInit() {
     game.rotate = (direction) => {
 
         const dirNum = (direction == 'left') ? 1 : -1;
-        console.log('========================================')
-        console.log(game.mino.position[0], game.mino.position[1])
+        //        console.log('========================================')
+        //        console.log(game.mino.position[0], game.mino.position[1])
         const rotatedPositions = game.mino.getRotatedPositions(dirNum);
         let isOccupied = true;
         let delta = { x: 0, y: 0 }
@@ -428,11 +428,11 @@ function gameInit() {
                 for (delta.x = 0; delta.x > -3; delta.x--) {
 
                     isOccupied = rotatedPositions.some(([x, y, _]) => {
-                        // console.log('2nd----------', x, y)
-                        // console.log({ x, y, delta.x, unti: game.field.coordinates[x + delta.x][y] != 0 })
-                        // console.log(x + delta.x > game.dimensions.width)
-                        // console.log(y > game.dimensions.height)
-                        // console.log(y > game.dimensions.height)
+                        //                        // console.log('2nd----------', x, y)
+                        //                        // console.log({ x, y, delta.x, unti: game.field.coordinates[x + delta.x][y] != 0 })
+                        //                        // console.log(x + delta.x > game.dimensions.width)
+                        //                        // console.log(y > game.dimensions.height)
+                        //                        // console.log(y > game.dimensions.height)
                         if (x + delta.x > game.dimensions.width || y + delta.y > game.dimensions.height || x + delta.x < 0 || y + delta.y < 0) {
                             return true
                         }
@@ -448,27 +448,27 @@ function gameInit() {
             game.mino.rotate(dirNum)
             game.mino.changePosition([game.mino.position[0] + delta.x, game.mino.position[1] + delta.y])
         }
-        console.log('was occupied?', isOccupied, 'what about delta?', delta)
+        //        console.log('was occupied?', isOccupied, 'what about delta?', delta)
 
         const positions = game.mino.getPositionOfEachBox()
         for (const position of positions) {
-            console.log({ px: position[0], py: position[1] })
+            //            console.log({ px: position[0], py: position[1] })
         }
 
-        console.log('========================================')
+        //        console.log('========================================')
     }
     game.next = () => {
         const position = game.mino.getPositionOfEachBox();
-        console.log('-----------------at tthe top---------------at tthe top');
-        console.log({ group: game.mino.group, boxes: game.mino.boxes });
-        console.log('-----------------at tthe top---------------at tthe top');
+        //        console.log('-----------------at tthe top---------------at tthe top');
+        //        console.log({ group: game.mino.group, boxes: game.mino.boxes });
+        //        console.log('-----------------at tthe top---------------at tthe top');
         const lowestY = position.reduce((min, elem) => Math.max(min, elem[1]), 0);
 
         const hasNeighborBelow = (() => {
             if (lowestY !== game.dimensions - 1) {
-                // console.log({ temp: game.field.coordinates })
+                //                // console.log({ temp: game.field.coordinates })
                 return position.some(coordinate => {
-                    // console.log({ coo: game.field.coordinates, coordinate })
+                    //                    // console.log({ coo: game.field.coordinates, coordinate })
                     return game.field.coordinates[coordinate[0]][coordinate[1] + 1] != 0
                 });
             } else return true;
@@ -482,12 +482,12 @@ function gameInit() {
             game.mino.changePosition([position[0][0], position[0][1] + 1])
         } else {
             if (!game.hang.isHang) {
-                console.log('in hang', game.hang, lowestY)
+                //                console.log('in hang', game.hang, lowestY)
                 game.hang.lowestReached = lowestY;
                 game.hang.isHang = true;
                 game.hang.hangTime = clock.getElapsedTime();
             } else {
-                console.log('not in hang');
+                //                console.log('not in hang');
                 game.hang.isHang = false;
                 game.hang.lowestReached = 0;
                 game.FixiateMino();
@@ -525,10 +525,10 @@ function gameInit() {
             }
             arr[i] = numDrop;
         }
-        console.log(arr)
-        if (arr[0] != 0) {
-            console.log('temp')
-        }
+        //        console.log(arr)
+        // if (arr[0] != 0) {
+        //            console.log('temp')
+        // }
         for (let i = 18; i >= 0; i--) {
             for (let j = 1; j < game.dimensions.width + 1; j++) {
                 const elem = field.coordinates[j][i];

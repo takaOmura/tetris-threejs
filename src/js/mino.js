@@ -147,7 +147,7 @@ export default class Mino {
             distance.y = position[1] - center.y
             position[0] = center.x + distance.y * direction
             position[1] = center.y + distance.x * direction * -1
-            console.log({ position, x: distance.x, y: distance.y, center })
+            //            console.log({ position, x: distance.x, y: distance.y, center })
         }
         return positions
     }
@@ -186,7 +186,7 @@ export default class Mino {
                     return new THREE.Vector3((position[0] - 0.5) * this.unit, (position[1] + 0.5) * this.unit, 0);
             }
         }
-        console.log('in getCenter', position[0], position[1])
+        //        console.log('in getCenter', position[0], position[1])
         return new THREE.Vector3(position[0], position[1], 0);
     }
     /**
