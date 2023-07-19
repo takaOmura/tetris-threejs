@@ -11,4 +11,4 @@ $ npm run dev
 - press <kbd>R</kbd> to rotate clockwise, <kbd>E</kbd> to rotate counterclockwise 
 
 ## Goal of This Project
-- have LAN Multiplayer Mode using WEBRTC(with manually typed IP address)
+- have LAN Multiplayer Mode using WEBRTC(with manually typed ICE)
