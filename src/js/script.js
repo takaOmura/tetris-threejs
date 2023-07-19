@@ -425,29 +425,14 @@ function gameInit() {
             game.mino.rotate(dirNum)
             game.mino.changePosition([game.mino.position[0] + delta.x, game.mino.position[1] + delta.y])
         }
-        //        console.log('was occupied?', isOccupied, 'what about delta?', delta)
-
-        const positions = game.mino.getPositionOfEachBox()
-        for (const position of positions) {
-            //            console.log({ px: position[0], py: position[1] })
-        }
-
-        //        console.log('========================================')
     }
     game.next = () => {
         const position = game.mino.getPositionOfEachBox();
-        //        console.log('-----------------at tthe top---------------at tthe top');
-        //        console.log({ group: game.mino.group, boxes: game.mino.boxes });
-        //        console.log('-----------------at tthe top---------------at tthe top');
         const lowestY = position.reduce((min, elem) => Math.max(min, elem[1]), 0);
 
         const hasNeighborBelow = (() => {
-            if (lowestY !== game.dimensions - 1) {
-                //                // console.log({ temp: game.field.coordinates })
-                return position.some(coordinate => {
-                    //                    // console.log({ coo: game.field.coordinates, coordinate })
-                    return game.field.coordinates[coordinate[0]][coordinate[1] + 1] != 0
-                });
+            if (lowestY !== game.dimensions.height - 1) {
+                return position.some(([x, y, _]) => game.field.coordinates[x][y + 1] != 0);
             } else return true;
         })();
 
@@ -475,12 +460,12 @@ function gameInit() {
     game.FixiateMino = () => {
         const field = game.field;
         const positions = game.mino.getPositionOfEachBox()
-        positions.forEach(coordinate => {
-            field.coordinates[coordinate[0]][coordinate[1]] = coordinate[2]
+        positions.forEach(([x, y, box]) => {
+            field.coordinates[x][y] = box
         });
-        positions.forEach(box => {
-            box[2].position.set(boxUnit * box[0], boxUnit * (19 - box[1]), 0)
-            field.fixedMino.add(box[2]);
+        positions.forEach(([x, y, box]) => {
+            box.position.set(boxUnit * x, boxUnit * (19 - y), 0)
+            field.fixedMino.add(box);
         })
         game.mino.group.removeFromParent()
 
