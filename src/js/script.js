@@ -247,12 +247,7 @@ const gameBox = (() => {
 game.scene.add(gameBox)
 
 gameInit()
-game.spawnMino(7)
-// console.log(game)
-//  game.mino.traverse((obj) => {
-// //     console.log(obj)
-//  })
-
+game.spawnMino(Math.floor(Math.random() * 7) + 1);
 
 window.addEventListener('keydown', (event) => {
     if (event.defaultPrevented) {
@@ -343,21 +338,6 @@ function tick() {
     stats.update()
 }
 
-function createTMino() {
-    const box1 = new THREE.Mesh(boxGeometry, fixedMinoMaterial)
-    const box2 = new THREE.Mesh(boxGeometry, fixedMinoMaterial)
-    const box3 = new THREE.Mesh(boxGeometry, fixedMinoMaterial)
-    const box4 = new THREE.Mesh(boxGeometry, fixedMinoMaterial)
-    const mino = new Mino().add(box1, box2, box3, box4)
-    mino.minoType = 2
-    return mino
-}
-
-function detectNeighbor() {
-
-}
-
-
 function gameInit() {
     game.field.coordinates = (() => {
         const array = new Array(game.dimensions.width + 2);
@@ -378,7 +358,6 @@ function gameInit() {
     };
     game.move = (direction) => {
         const positions = game.mino.getPositionOfEachBox();
-        //        console.log({ beforeMove: positions })
         const delta = (() => {
             switch (direction) {
                 case 'left':
@@ -391,9 +370,7 @@ function gameInit() {
                     return { x: 0, y: 1 };
             }
         })();
-        //        // console.log({ positions, delta, coordinates: game.field.coordinates })
         const hasNeighbor = positions.some(([x, y, _]) => {
-            //            console.log({ inHas: game.field.coordinates[x + delta.x], position: [x, y], delta, coo: game.field.coordinates })
             if (x + delta.x > game.dimensions.width || y + delta.y > game.dimensions.height || x + delta.x < 0 || y + delta.y < 0) {
                 return true
             }
@@ -491,7 +468,7 @@ function gameInit() {
                 game.hang.isHang = false;
                 game.hang.lowestReached = 0;
                 game.FixiateMino();
-                game.spawnMino(Math.floor(Math.random() * 6) + 1);
+                game.spawnMino(Math.floor(Math.random() * 7) + 1);
             }
         }
     };
@@ -534,17 +511,17 @@ function gameInit() {
                 const elem = field.coordinates[j][i];
                 const target = field.coordinates[j][i + arr[i]];
                 if (arr[i] != 0) {
-                    if (typeof (target) == 'object') {
+                    if (target instanceof THREE.Object3D) {
                         field.fixedMino.remove(target)
                     }
                     field.coordinates[j][i + arr[i]] = elem;
-                    if (typeof (elem) == 'object') {
+                    if (elem instanceof THREE.Object3D) {
                         elem.position.set(elem.position.x, elem.position.y - arr[i] * boxUnit, 0)
                     }
                     field.coordinates[j][i] = 0
                 }
             }
-            console.warn(game.field.coordinates)
+            // console.warn(game.field.coordinates)
         }
     }
 }
