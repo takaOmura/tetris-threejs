@@ -19,7 +19,7 @@ import Mino from "./mino.js"
  * units, constants
  */
 const boxUnit = 1;
-const baseTime = 0.2;
+const baseTime = 0.5;
 const game = {
     dimensions: {
         height: 20,
@@ -312,13 +312,13 @@ function needsUpdate(material) {
 
 function tick() {
     if (!game.gamePause) {
-        const elapsedTime = clock.getElapsedTime();
         if (!game.userPause) {
+            const elapsedTime = clock.getElapsedTime();
             if (game.hang.isHang) {
-                if (time - game.hang.hangTime > baseTime * 5) {
+                if (elapsedTime - game.hang.hangTime > baseTime * 5) {
                     game.next()
+                    time = elapsedTime
                 }
-                time = elapsedTime
                 //                // console.log('hanging!!!', game.hang.hangTime, time)
             } else if (elapsedTime - time > baseTime) {
                 game.next()
@@ -337,6 +337,7 @@ function tick() {
     renderer.render(game.scene, camera)
     stats.update()
 }
+
 
 function gameInit() {
     game.field.coordinates = (() => {
