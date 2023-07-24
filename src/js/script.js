@@ -14,12 +14,13 @@ import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
 import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js';
 import Stats from "three/examples/jsm/libs/stats.module";
 import Mino from "./mino.js"
+import { round } from './util.js'
 
 /**
  * units, constants
  */
 const boxUnit = 1;
-const baseTime = 0.5;
+const baseTime = 1;
 const game = {
     dimensions: {
         height: 20,
@@ -45,12 +46,15 @@ const game = {
         hangTime: 0.0,
         lowestReached: 0,
     },
+    linesDeleted: 0,
+    dropWindow: [4, 3.5, 3, 2.75, 2.5, 2.25, 2, 1.75, 1.5, 1.25, 1, 0.75, 0.5, 0.4, 0.3, 0.2, 0.1, 0.075, 0.05],
+    get level() { return Math.floor((this.linesDeleted / 10)) },
     spawnMino: function () { },
     rotate: function () { },
     next: function () { },
     move: function () { },
     render: function () { },
-    FixiateMino: function () { },
+    fixiateMino: function () { },
 };
 const colors = {
     deepskyblue: 0x00bfff,
@@ -266,7 +270,7 @@ window.addEventListener('keydown', (event) => {
     } else if (event.code == 'KeyE') {
         game.rotate('left')
     }
-    if (event.code === "Space") {
+    if (event.code === "KeyP") {
         //        console.log('userPause pressed')
         game.userPause = (game.userPause) ? false : true
     }
@@ -309,18 +313,20 @@ function needsUpdate(material) {
         material.needsUpdate = true
     }
 }
+for (let index = 0; index <= 30; index++) {
+}
 
 function tick() {
     if (!game.gamePause) {
         if (!game.userPause) {
             const elapsedTime = clock.getElapsedTime();
+            const currentDropWindow = game.dropWindow[Math.min(game.level, 18)]
             if (game.hang.isHang) {
-                if (elapsedTime - game.hang.hangTime > baseTime * 5) {
+                if (elapsedTime - game.hang.hangTime > currentDropWindow * 5) {
                     game.next()
                     time = elapsedTime
                 }
-                //                // console.log('hanging!!!', game.hang.hangTime, time)
-            } else if (elapsedTime - time > baseTime) {
+            } else if (elapsedTime - time > currentDropWindow) {
                 game.next()
                 time = elapsedTime
             }
@@ -379,13 +385,12 @@ function gameInit() {
         });
         if (!hasNeighbor) {
             game.mino.changePosition([game.mino.position[0] + delta.x, game.mino.position[1] + delta.y])
+        } else if (direction == 'down' && hasNeighbor) {
+            game.fixiateMino();
         }
     };
     game.rotate = (direction) => {
-
         const dirNum = (direction == 'left') ? 1 : -1;
-        //        console.log('========================================')
-        //        console.log(game.mino.position[0], game.mino.position[1])
         const rotatedPositions = game.mino.getRotatedPositions(dirNum);
         let isOccupied = true;
         let delta = { x: 0, y: 0 }
@@ -406,11 +411,6 @@ function gameInit() {
                 for (delta.x = 0; delta.x > -3; delta.x--) {
 
                     isOccupied = rotatedPositions.some(([x, y, _]) => {
-                        //                        // console.log('2nd----------', x, y)
-                        //                        // console.log({ x, y, delta.x, unti: game.field.coordinates[x + delta.x][y] != 0 })
-                        //                        // console.log(x + delta.x > game.dimensions.width)
-                        //                        // console.log(y > game.dimensions.height)
-                        //                        // console.log(y > game.dimensions.height)
                         if (x + delta.x > game.dimensions.width || y + delta.y > game.dimensions.height || x + delta.x < 0 || y + delta.y < 0) {
                             return true
                         }
@@ -438,27 +438,24 @@ function gameInit() {
         })();
 
         if (!hasNeighborBelow) {
-            if (lowestY > game.hang.lowestReached) {
+            if (lowestY >= game.hang.lowestReached) {
                 game.hang.isHang = false;
                 game.hang.lowestReached = lowestY
             }
             game.mino.changePosition([position[0][0], position[0][1] + 1])
         } else {
             if (!game.hang.isHang) {
-                //                console.log('in hang', game.hang, lowestY)
                 game.hang.lowestReached = lowestY;
                 game.hang.isHang = true;
                 game.hang.hangTime = clock.getElapsedTime();
             } else {
-                //                console.log('not in hang');
-                game.hang.isHang = false;
-                game.hang.lowestReached = 0;
-                game.FixiateMino();
-                game.spawnMino(Math.floor(Math.random() * 7) + 1);
+                game.fixiateMino();
             }
         }
     };
-    game.FixiateMino = () => {
+    game.fixiateMino = () => {
+        game.hang.isHang = false;
+        game.hang.lowestReached = 0;
         const field = game.field;
         const positions = game.mino.getPositionOfEachBox()
         positions.forEach(([x, y, box]) => {
@@ -488,10 +485,9 @@ function gameInit() {
             }
             arr[i] = numDrop;
         }
-        //        console.log(arr)
-        // if (arr[0] != 0) {
-        //            console.log('temp')
-        // }
+
+        game.linesDeleted += numDrop;
+
         for (let i = 18; i >= 0; i--) {
             for (let j = 1; j < game.dimensions.width + 1; j++) {
                 const elem = field.coordinates[j][i];
@@ -509,5 +505,6 @@ function gameInit() {
             }
             // console.warn(game.field.coordinates)
         }
+        game.spawnMino(Math.floor(Math.random() * 7) + 1);
     }
 }
